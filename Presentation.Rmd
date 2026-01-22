@@ -1,0 +1,197 @@
+---
+title: "AWESOME LIFE HACK TO MAKE IT INTO BILLBOARD 100"
+author: "Yunbae Chae"
+date: "11/2/2021"
+output: beamer_presentation
+bibliography: presentation.bib
+nocite: '@*'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## SECRET REVEAL
+
+Do you like to listen to...
+
+- Dancing songs?
+- Energetic?
+- Acoustic?
+
+## SECRET REVEAL
+
+I think I've just found the secret recipe...
+
+## STATISTICS + DATA
+
+It was when I was digging into some billboard 100 data...
+
+## What defines a 'good' song?
+
+![]("Pop.jpg")
+
+---
+
+![]("Rap.jpg")
+
+---
+
+![]("Rock.jpg")
+
+---
+
+![]("Dancing.jpg")
+
+---
+
+![]("Kpop.jpeg")
+
+---
+
+![]("BTS.jpg")
+
+## So, recipe?
+You might notice you like chord progressions, lyrics, song structure, emotions or special hooks (@goodsong)
+
+- Rather, I took a more statistical approach...
+
+---
+
+I used the Billboard 100 data set (@tidytuesday).
+
+Audio features:
+
+- Danceability
+- Energy
+- Key
+- Loudness
+- Mode
+- Speechiness
+- Acousticness
+- Instrumentalness
+- Liveness
+- Valence
+- Tempo
+- Time signature
+
+## Selection
+
+Linear Regression
+
+- Linearity
+- Constant variance (residuals)
+- Normal distribution (residuals)
+
+---
+
+```{r plots, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center"}
+
+packages <- c("ggplot2","patchwork","dplyr","broom")
+lapply(packages, library, character.only=TRUE)
+
+audio_features <- read.csv("audio_features.csv")
+
+AA <- audio_features %>% select(danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,time_signature,spotify_track_popularity) %>% filter(is.na(spotify_track_popularity)==0 & is.na(danceability)==0)
+
+a <- ggplot2::ggplot(AA,aes(x=spotify_track_popularity,y=danceability))+ geom_point() + stat_smooth(method="lm", col="red")
+b <- ggplot2::ggplot(AA,aes(x=spotify_track_popularity,y=energy))+ geom_point() + stat_smooth(method="lm", col="red")
+d <- ggplot2::ggplot(AA,aes(x=spotify_track_popularity,y=loudness))+ geom_point() + stat_smooth(method="lm", col="red")
+j <- ggplot2::ggplot(AA,aes(x=spotify_track_popularity,y=valence))+ geom_point() + stat_smooth(method="lm", col="red")
+k <- ggplot2::ggplot(AA,aes(x=spotify_track_popularity,y=tempo))+ geom_point() + stat_smooth(method="lm", col="red")
+
+aa <- lm(danceability~spotify_track_popularity,AA)
+bb <- lm(energy~spotify_track_popularity,AA)
+dd <- lm(loudness~spotify_track_popularity,AA)
+jj <- lm(valence~spotify_track_popularity,AA)
+kk <- lm(tempo~spotify_track_popularity,AA)
+
+aas <- glance(aa)
+bbs <- glance(bb)
+dds <- glance(dd)
+jjs <- glance(jj)
+kks <- glance(kk)
+
+a2 <- ggplot2::ggplot(AA)+geom_point(mapping=aes(x=aa$fitted.values ,y=aa$residuals)) + geom_hline(yintercept=0,lwd=2)+ylab("Residuals")+xlab("Fitted values")+ggtitle("Danceability")
+b2 <- ggplot2::ggplot(AA)+geom_point(mapping=aes(x=bb$fitted.values ,y=bb$residuals)) + geom_hline(yintercept=0,lwd=2)+ylab("Residuals")+xlab("Fitted values")+ggtitle("Energy")
+d2 <- ggplot2::ggplot(AA)+geom_point(mapping=aes(x=dd$fitted.values ,y=dd$residuals)) + geom_hline(yintercept=0,lwd=2)+ylab("Residuals")+xlab("Fitted values")+ggtitle("Loudness")
+j2 <- ggplot2::ggplot(AA)+geom_point(mapping=aes(x=jj$fitted.values ,y=jj$residuals)) + geom_hline(yintercept=0,lwd=2)+ylab("Residuals")+xlab("Fitted values")+ggtitle("Valence")
+k2 <- ggplot2::ggplot(AA)+geom_point(mapping=aes(x=kk$fitted.values ,y=kk$residuals)) + geom_hline(yintercept=0,lwd=2)+ylab("Residuals")+xlab("Fitted values")+ggtitle("Tempo")
+
+a3 <- ggplot2::ggplot(AA, aes(sample=danceability))+geom_qq()+geom_qq_line()+xlab("theoretical")+ylab("Danceability")
+b3 <- ggplot2::ggplot(AA, aes(sample=energy))+geom_qq()+geom_qq_line()+xlab("theoretical")+ylab("Energy")
+d3 <- ggplot2::ggplot(AA, aes(sample=loudness))+geom_qq()+geom_qq_line()+xlab("theoretical")+ylab("Loudness")
+j3 <- ggplot2::ggplot(AA, aes(sample=valence))+geom_qq()+geom_qq_line()+xlab("theoretical")+ylab("Valence")
+k3 <- ggplot2::ggplot(AA, aes(sample=tempo))+geom_qq()+geom_qq_line()+xlab("theoretical")+ylab("Tempo")
+
+```
+
+```{r plotreveal, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center" }
+
+print(a+b+d+j+k)
+
+```
+
+---
+
+- Danceability
+- Energy
+- Loudness
+- Valence
+- Tempo
+
+---
+
+```{r plotreveal2, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center" }
+
+print(a2+b2+d2+j2+k2)
+
+```
+
+---
+
+```{r plotreveal3, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center" }
+
+print(a3+b3+d3+j3+k3)
+
+```
+
+## After all...
+
+Simple Linear Regression:
+$$Y_{i}=\alpha+\beta X_{i}+\epsilon_{i}$$
+
+Testing:
+$H_{0}:\beta=0$ against $H_{1}:\beta\neq 0$.
+
+Sampling distribution:
+$$\hat{\beta}\sim N(\beta,\frac{\sigma^2}{S_{xx}})$$
+
+Test statistic:
+$\tau=\frac{\hat{\beta}}{s_{Y \mid X}/\sqrt{S_{xx}}} \sim t_{24328}$ under $H_{0}$
+
+## P values
+
+- Danceability: `r aas$p.value` < 0.05
+- Energy: `r bbs$p.value` < 0.05
+- Loudness: < $2.2\times10^{-16}$
+- Valence: `r jjs$p.value` < 0.05
+- Tempo: `r kks$p.value` < 0.05
+
+REJECT $H_{0}$.
+
+"There is a relationship between popularity and these audio features: As the P-value is very small, we have very strong evidence to reject $H_{0}$. I.E. very strong evidence that the slope parameter is significant and there is a relationship between the popularity and the audio features of the songs."
+
+## Finale
+
+```{r plotrevealfinale, echo=FALSE, message=FALSE, warning=FALSE, fig.align="center" }
+
+print(a+b+d+j+k)
+
+```
+
+## THE SECRET RECIPE
+
+?
+
+## References
