@@ -23,8 +23,7 @@ This presentation used R Markdown to create reproducible slides for data reporti
 
 ## Files
 - [Presentation.Rmd](Presentation.Rmd) → Original R Markdown source (root)  
-- [Presentation.pdf](Presentation.pdf) → Rendered PDF slides  
-- [Presentation.html](Presentation.html) → Interactive HTML version  
+- [Presentation.pdf](Presentation.pdf) → Rendered PDF slides
 - [zoom_0.mp4](zoom_0.mp4) → Recorded presentation video  
 - [audio_features.csv](audio_features.csv) → Data file  
 - Images (Kpop.jpeg, Pop.jpg, Rap.jpg, Rock.jpg, BTS.jpg, Dancing.jpg) → Slide visuals  
